@@ -883,50 +883,58 @@
   </section>
 
   <section class="section" id="contact">
-    <div class="container">
-      <div class="cta-grid">
-        <div class="reveal">
-          <h2 class="cta-text">
-            Готовы прокачать<br>
-            коммуникации<br>
-            в команде?
-          </h2>
-          <p style="margin-top:18px;max-width:440px;color:var(--muted);font-size:18px;line-height:1.7">
-            Оставьте заявку, и мы проведём персональную демонстрацию платформы.
-          </p>
-        </div>
+  <div class="container">
+    <div class="cta-grid">
+      <div class="reveal">
+        <h2 class="cta-text">
+          Готовы прокачать<br>
+          коммуникации<br>
+          в команде?
+        </h2>
+        <p style="margin-top:18px;max-width:440px;color:var(--muted);font-size:18px;line-height:1.7">
+          Оставьте заявку, и мы проведём персональную демонстрацию платформы.
+        </p>
+      </div>
 
-        <div class="cta-form reveal">
+      <div class="cta-form reveal" style="transition-delay:.1s">
+        <form
+          name="demo"
+          method="POST"
+          data-netlify="true"
+          id="demo-form"
+        >
+          <input type="hidden" name="form-name" value="demo">
 
-        <form name="demo" method="POST" data-netlify="true">
-        
-        <input type="hidden" name="form-name" value="demo" />
-        
-        <div class="form-grid">
-          <input class="field" name="name" placeholder="Имя">
-          <input class="field" name="phone" placeholder="Телефон">
-          <input class="field span2" name="email" placeholder="Email">
-          <input class="field" name="company" placeholder="Компания">
-        
-          <select class="select" name="role">
-            <option>HR-директор</option>
-            <option>Руководитель команды</option>
-            <option>L&D</option>
-          </select>
-        </div>
-        
-        <label class="checkline">
-          <input type="checkbox" name="consent" required>
-          <span>Я согласен на обработку персональных данных</span>
-        </label>
-        
-        <button class="btn btn-primary full-btn" type="submit">
-        Получить демо
-        </button>
-        
+          <div class="form-grid">
+            <input class="field" name="name" placeholder="Имя" required>
+            <input class="field" name="phone" placeholder="Телефон" required>
+            <input class="field span2" name="email" placeholder="Email" required>
+            <input class="field" name="company" placeholder="Компания">
+
+            <select class="select" name="role">
+              <option>HR-директор</option>
+              <option>Руководитель команды</option>
+              <option>L&D</option>
+            </select>
+          </div>
+
+          <label class="checkline">
+            <input type="checkbox" name="consent" required>
+            <span>Я согласен на обработку персональных данных.</span>
+          </label>
+
+          <button class="btn btn-primary full-btn" type="submit">
+            Получить демо
+          </button>
+
+          <div id="form-success" style="display:none;margin-top:18px;color:#58e38d">
+            Спасибо! Мы свяжемся с вами.
+          </div>
         </form>
-        
-        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
           <a class="btn btn-primary full-btn" href="#">Получить демо</a>
         </div>
@@ -949,5 +957,39 @@
 
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   </script>
+  <script>
+  const io = new IntersectionObserver(
+    entries => entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('show');
+    }),
+    { threshold: 0.12 }
+  );
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const form = document.getElementById("demo-form");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString()
+      });
+
+      if (!response.ok) throw new Error("Ошибка отправки");
+
+      form.reset();
+      document.getElementById("form-success").style.display = "block";
+    } catch (error) {
+      alert("Не удалось отправить форму. Попробуйте ещё раз.");
+      console.error(error);
+    }
+  });
+</script>
 </body>
 </html>
